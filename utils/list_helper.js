@@ -13,7 +13,21 @@ const totalLikes= (blogs) => {
     :likes.map(like => like.likes).reduce((acc, amount) => acc + amount)
 }
 
+const favoriteBlog =(blogs) => {
+  var collection = require('lodash/math')
+  //   var favorite=collection.groupBy(blogs,blogs.likes)
+  var favorite= collection.maxBy(blogs,function(o){return o.likes})
+  //   var likes= blogs.filter(function(blog){
+  //     return blog.likes===favorite
+  //   })
+
+  return blogs.length===0
+    ? NaN
+    :JSON.parse(JSON.stringify(favorite, ['author', 'likes', 'title']))
+}
+
 module.exports = {
   dummy,
-  totalLikes
+  totalLikes,
+  favoriteBlog
 }
