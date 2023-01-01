@@ -26,8 +26,26 @@ const favoriteBlog =(blogs) => {
     :JSON.parse(JSON.stringify(favorite, ['author', 'likes', 'title']))
 }
 
+const mostBlogs =(blogs) => {
+  var all=require('lodash')
+  //lajitellaan authorit, sijoitetaan listalle
+  var groupbyAuthor=all.groupBy(blogs.map(like => like.author),blogs.author)
+  //selvitetään kuinka monta heillä on blogeja
+  var mostBlogs=all.groupBy(groupbyAuthor, 'length')
+  //tehdään listan avaimista ja arvoista ja valitaan ensimmäinen arvo, jossa on esiintymien määrä
+  var authorsBlogs=all.toPairs(mostBlogs).map(p => parseInt(p[0]))
+  //selvitetään mikä on maksimi listassa
+  var maxauthorBlog=all.max(authorsBlogs)
+  //valitaan authori, jolla on tämä key ja valitana ensimmäinen author listasta
+  var author =mostBlogs[maxauthorBlog][0][0]
+  //tehdään json
+  var mostBlogsJson={ 'author': author, 'blogs': maxauthorBlog }
+  return mostBlogsJson}
+
+
 module.exports = {
   dummy,
   totalLikes,
-  favoriteBlog
+  favoriteBlog,
+  mostBlogs
 }
