@@ -1,3 +1,5 @@
+var all=require('lodash')
+
 const dummy = (blogs) => {
   blogs = 1
   return blogs
@@ -27,10 +29,9 @@ const favoriteBlog =(blogs) => {
 }
 
 const mostBlogs =(blogs) => {
-  var all=require('lodash')
   //lajitellaan authorit, sijoitetaan listalle
   var groupbyAuthor=all.groupBy(blogs.map(like => like.author),blogs.author)
-  //selvitetään kuinka monta heillä on blogeja
+  //selvitetään kuinka monta heillä on esiintymiä
   var mostBlogs=all.groupBy(groupbyAuthor, 'length')
   //tehdään listan avaimista ja arvoista ja valitaan ensimmäinen arvo, jossa on esiintymien määrä
   var authorsBlogs=all.toPairs(mostBlogs).map(p => parseInt(p[0]))
@@ -43,9 +44,36 @@ const mostBlogs =(blogs) => {
   return mostBlogsJson}
 
 
+const mostLikes=(blogs => {
+  //lajitellaan authorit, sijoitetaan listalle
+  var groupbyAuthor=all.groupBy(blogs.map(like => like.author),blogs.author)
+  //lista kaikista kirjailijoista, unique values
+  var authors=all.toPairs(groupbyAuthor).map(p => p[0])
+
+  var authorLikes=0
+  //käydään läpi authorlistan
+  for (let index = 0; index < authors.length; index++) {
+    //katsotaan jokaista kirjailijaa kerrallaan
+    var blog= blogs.filter(function(author){
+      return author.author===authors[index]
+    })
+    //lasketaan kullekin kirjailijalle tykkäysten summan
+    var summaLikes=all.sumBy(blog, function(o) { return o.likes })
+    //jos summa on suurin niin tehdään json. Tässä tarvitaan luodaan turhaan monta kertaa json, mutta nyt tämä saa kelvata
+    if(summaLikes>authorLikes){
+    //tehdään json
+      var mostLikesson={ 'author': blog[0].author, 'likes': summaLikes }
+      authorLikes=summaLikes
+    }
+  }
+  return mostLikesson
+})
+
+
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
-  mostBlogs
+  mostBlogs,
+  mostLikes
 }
