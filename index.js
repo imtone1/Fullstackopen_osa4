@@ -64,8 +64,8 @@ server.listen(config.PORT, () => {
 
 // app.post('/api/blogs', (request, response) => {
 //     const body = request.body
-  
-//   const blog = new Blog({ 
+
+//   const blog = new Blog({
 //     title: body.title,
 //     author: body.author,
 //     url: body.url,

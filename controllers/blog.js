@@ -8,7 +8,7 @@ blogsRouter.get('/', (request, response) => {
 })
 
 blogsRouter.get('/:id', (request, response, next) => {
-    Blog.findById(request.params.id)
+  Blog.findById(request.params.id)
     .then(note => {
       if (note) {
         response.json(note)
@@ -20,25 +20,25 @@ blogsRouter.get('/:id', (request, response, next) => {
 })
 
 blogsRouter.post('/', (request, response, next) => {
-    const body = request.body
-  
-    const blog = new Blog({
-      title: body.title,
-      author: body.author,
-      url: body.url,
-      likes: body.number
+  const body = request.body
+
+  const blog = new Blog({
+    title: body.title,
+    author: body.author,
+    url: body.url,
+    likes: body.number
+  })
+
+  blog
+    .save()
+    .then(result => {
+      response.status(201).json(result)
     })
-  
-    blog
-      .save()
-      .then(result => {
-        response.status(201).json(result)
-      })
-      .catch(error => next(error))
+    .catch(error => next(error))
 })
 
 blogsRouter.delete('/:id', (request, response, next) => {
-  Note.findByIdAndRemove(request.params.id)
+  Blog.findByIdAndRemove(request.params.id)
     .then(() => {
       response.status(204).end()
     })
@@ -48,14 +48,16 @@ blogsRouter.delete('/:id', (request, response, next) => {
 blogsRouter.put('/:id', (request, response, next) => {
   const body = request.body
 
-  const note = {
-    content: body.content,
-    important: body.important,
+  const blog = {
+    title: body.title,
+    author: body.author,
+    url: body.url,
+    likes: body.number
   }
 
-  Note.findByIdAndUpdate(request.params.id, note, { new: true })
-    .then(updatedNote => {
-      response.json(updatedNote)
+  Blog.findByIdAndUpdate(request.params.id, blog, { new: true })
+    .then(updatedBlog => {
+      response.json(updatedBlog)
     })
     .catch(error => next(error))
 })
