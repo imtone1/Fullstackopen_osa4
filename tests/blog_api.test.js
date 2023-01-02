@@ -105,6 +105,22 @@ describe('blogs post', () => {
 
   })
 
+  test('title and url must be, 400', async () => {
+    const newBlog = {
+      _id: '5a422a851b54a6762777',
+      author: 'testi testinen',
+      likes: 3,
+      __v: 0
+    }
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400)
+
+    const blogsAtEnd= await helper.blogsInDb()
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+
+  })
 
 })
 afterAll(() => {
