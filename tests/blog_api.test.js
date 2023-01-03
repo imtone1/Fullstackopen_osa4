@@ -60,12 +60,14 @@ describe('blogs api', () => {
 
 describe('blogs post', () => {
   test('post is a go', async () => {
+    const user= await helper.usersInDb()
     const newBlog = {
       _id: '5a422a851b54a6762777',
       title: 'testi',
       author: 'testi testinen',
       url: 'https://reacttesti.com/',
       likes: 80,
+      userId: user[0].id,
       __v: 0
     }
 
@@ -85,11 +87,13 @@ describe('blogs post', () => {
   })
 
   test('likes has 0', async () => {
+    const user= await helper.usersInDb()
     const newBlog = {
       _id: '5a422a851b54a6762777',
       title: 'testi',
       author: 'testi testinen',
       url: 'https://reacttesti.com/',
+      userId: user[0].id,
       __v: 0
     }
     await api
@@ -108,10 +112,12 @@ describe('blogs post', () => {
   })
 
   test('title and url must be, 400', async () => {
+    const user= await helper.usersInDb()
     const newBlog = {
       _id: '5a422a851b54a6762777',
       author: 'testi testinen',
       likes: 3,
+      userId: user[0].id,
       __v: 0
     }
     await api
