@@ -59,15 +59,16 @@ describe('blogs api', () => {
 })
 
 describe('blogs post', () => {
+
   test('post is a go', async () => {
-    const user= await helper.usersInDb()
+
+
     const newBlog = {
       _id: '5a422a851b54a6762777',
       title: 'testi',
       author: 'testi testinen',
       url: 'https://reacttesti.com/',
       likes: 80,
-      userId: user[0].id,
       __v: 0
     }
 
@@ -248,6 +249,59 @@ describe('when there is initially one user at db', () => {
     const usersAtEnd = await helper.usersInDb()
     expect(usersAtEnd).toHaveLength(usersAtStart.length)
   })
+})
+
+describe('login', () => {
+  beforeEach(async () => {
+    await User.deleteMany({})
+
+    const passwordHash = await bcrypt.hash('sekret', 10)
+    const user = new User({ username: 'root', passwordHash })
+
+    await user.save()
+  })
+
+  test('successfull login', async () => {
+    const userToAdd=
+    {
+      username: 'root',
+      name: 'Superuser',
+      password: 'sekret',
+    }
+    await api.post('/api/login')
+      .send(userToAdd)
+      .expect(200).expect(({ headers }) => {
+        console.log('BEARER', headers)
+      })
+  })
+
+  test('successfull login', async () => {
+    // var token = headers['x-access-token']
+    const newBlog = {
+      _id: '5a422a851b54a6762777',
+      title: 'testi',
+      author: 'testi testinen',
+      url: 'https://reacttesti.com/',
+      likes: 80,
+      __v: 0
+    }
+
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      // .set('Authorization', token)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const blogsAtEnd= await helper.blogsInDb()
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
+    const contents=blogsAtEnd.map(b => b.title)
+    expect(contents).toContain(
+      'testi'
+    )
+  })
+
 })
 
 afterAll(() => {
