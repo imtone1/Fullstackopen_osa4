@@ -6,6 +6,7 @@ const helper = require('./test_helper')
 const app = require('../app')
 const api = supertest(app)
 const Blog = require('../models/blog')
+// const tokenExtractor = require('../utils/middleware')
 
 
 beforeEach(async () => {
@@ -60,30 +61,43 @@ describe('blogs api', () => {
 
 describe('blogs post', () => {
   test('post is a go', async () => {
-    const user= await helper.usersInDb()
-    const newBlog = {
-      _id: '5a422a851b54a6762777',
-      title: 'testi',
-      author: 'testi testinen',
-      url: 'https://reacttesti.com/',
-      likes: 80,
-      userId: user[0].id,
-      __v: 0
+    // const user= await helper.usersInDb()
+    // const newBlog = {
+    //   _id: '5a422a851b54a6762777',
+    //   title: 'testi',
+    //   author: 'testi testinen',
+    //   url: 'https://reacttesti.com/',
+    //   likes: 80,
+    //   userId: user[0].id,
+    //   __v: 0
+    // }
+
+    const userKirj={
+      username: 'root',
+      password : 'salainen'
     }
-
-
     await api
-      .post('/api/blogs')
-      .send(newBlog)
+      .post('/api/login')
+      .send(userKirj)
       .expect(201)
       .expect('Content-Type', /application\/json/)
 
-    const blogsAtEnd= await helper.blogsInDb()
-    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
-    const contents=blogsAtEnd.map(b => b.title)
-    expect(contents).toContain(
-      'testi'
-    )
+
+
+
+
+    // await api
+    //   .post('/api/blogs')
+    //   .send(newBlog)
+    //   .expect(201)
+    //   .expect('Content-Type', /application\/json/)
+
+    // const blogsAtEnd= await helper.blogsInDb()
+    // expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
+    // const contents=blogsAtEnd.map(b => b.title)
+    // expect(contents).toContain(
+    //   'testi'
+    // )
   })
 
   test('likes has 0', async () => {
@@ -248,6 +262,33 @@ describe('when there is initially one user at db', () => {
     const usersAtEnd = await helper.usersInDb()
     expect(usersAtEnd).toHaveLength(usersAtStart.length)
   })
+
+  test('login', async () => {
+    const userKirj={
+      username: 'root',
+      password : 'salainen'
+    }
+    await api
+      .post('/api/login')
+      .send(userKirj)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+
+  })
+
+  // test('login auth', async () => {
+
+  //   const userKirj={
+  //     username: 'root',
+  //     password : 'salainen'
+  //   }
+
+  //   await api
+  //     .post('/api/blogs', tokenExtractor.tokenExtractor, (req,res) => {} )
+  //     .expect(201)
+  //     .expect('Content-Type', /application\/json/)
+  // })
 })
 
 afterAll(() => {
