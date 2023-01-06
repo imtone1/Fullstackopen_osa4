@@ -48,7 +48,7 @@ blogsRouter.post('/', tokenExtractor.tokenExtractor, async (request, response) =
   const user = await User.findById(decodedToken.id)
   const blog = new Blog({
     title: body.title,
-    author: body.author,
+    author: user.name,
     url: body.url,
     likes: body.likes,
     userId: user._id
@@ -67,10 +67,34 @@ blogsRouter.post('/', tokenExtractor.tokenExtractor, async (request, response) =
 
 })
 
-blogsRouter.delete('/:id', async (request, response) => {
-  await Blog.findByIdAndRemove(request.params.id)
-  response.status(204).end()
+blogsRouter.delete('/:id',tokenExtractor.tokenExtractor, async (request, response) => {
+  //verifioidaan token
+  const decodedToken = jwt.verify(request.token, process.env.SECRET)
+  if (!request.token || !decodedToken.id){
+    return response.status(401).json({ error: 'token missing or invalid' })
+  }
+  //etsitään käyttäjä tokenin tiedoilla
+  const user = await User.findById(decodedToken.id)
 
+  // await Blog
+  //   .find({}).populate('user', { id:1 })
+  //etsitään blogi
+  // const blog = await Blog.findById(request.params.id)
+  console.log('user id', user.id)
+  console.log('user blog ', user.blogs)
+  console.log('tokeni', decodedToken.id)
+  console.log('user blog', request.params.id)
+  // console.log('blogi user', blog)
+  // console.log('stringi blog user id' , JSON.stringify(blog.id))
+  console.log('stringi user id ', JSON.stringify(user.id))
+  console.log('stringi user.blogs ', JSON.stringify(user.blogs) )
+  if( JSON.stringify(user.blogs).includes(request.params.id)){
+    //poistetaan blogi
+    await Blog.findByIdAndRemove(request.params.id)
+    response.status(204).end()
+  }else{
+    response.status(401).json({ error: 'it\'s not your blog' })
+  }
 
 })
 
